@@ -6,10 +6,10 @@ import { AddNewFab } from "../ui/AddNewFab";
 import { DeleteEventFab } from "../ui/DeleteEventFab";
 import { messages } from "../../helpers/calendar-messages-es";
 import { CalendarEvent } from "./CalendarEvent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarModal } from "./CalendarModal";
 import { uiOpenModal } from "../../actions/ui";
-import { eventSetActive, eventClearActiveEvent } from "../../actions/events";
+import { eventSetActive, eventClearActiveEvent, eventStartLoading } from "../../actions/events";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "moment/locale/es";
 
@@ -20,6 +20,7 @@ moment.locale("es");
 export const CalendarScreen = () => {
 
   const {events, activeEvent} = useSelector(state => state.calendar)
+  const {uid} = useSelector(state => state.auth)
 
 
   const dispatch = useDispatch()
@@ -50,7 +51,7 @@ export const CalendarScreen = () => {
 
   const eventStyleGetter = (ev, start, end, isSelected) => {
     const style = {
-      backgroundColor: "#367CF7",
+      backgroundColor: (uid === ev.user._id) ? "#367CF7" : '#465660',
       botderRadius: "0px",
       opacity: 0.8,
       display: "block",
@@ -61,6 +62,11 @@ export const CalendarScreen = () => {
       style,
     };
   };
+
+  useEffect(() => {
+    dispatch(eventStartLoading())
+  }, [dispatch])
+  
 
   return (
     <div className="calendar-screen">
